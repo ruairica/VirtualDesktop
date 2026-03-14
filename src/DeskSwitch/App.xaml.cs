@@ -1,6 +1,6 @@
 using System.Windows;
 using System.Windows.Interop;
-using MaximizeToVirtualDesktop.Interop;
+using WindowsVirtualDesktop.Interop;
 
 namespace DeskSwitch;
 

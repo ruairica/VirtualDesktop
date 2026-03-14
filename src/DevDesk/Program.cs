@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using MaximizeToVirtualDesktop.Interop;
+using WindowsVirtualDesktop.Interop;
 
 namespace DevDesk;
 

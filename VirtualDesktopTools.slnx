@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/WindowsVirtualDesktop.Interop/WindowsVirtualDesktop.Interop.csproj" />
+    <Project Path="src/DeskSwitch/DeskSwitch.csproj" />
+    <Project Path="src/DevDesk/DevDesk.csproj" />
+  </Folder>
+</Solution>

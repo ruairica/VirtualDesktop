@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using MaximizeToVirtualDesktop.Interop;
+using WindowsVirtualDesktop.Interop;
 
 namespace DevDesk;
 

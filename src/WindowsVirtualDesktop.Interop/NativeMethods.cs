@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MaximizeToVirtualDesktop.Interop;
+namespace WindowsVirtualDesktop.Interop;
 
 public static partial class NativeMethods
 {

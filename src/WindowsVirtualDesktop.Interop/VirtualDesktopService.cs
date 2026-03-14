@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace MaximizeToVirtualDesktop.Interop;
+namespace WindowsVirtualDesktop.Interop;
 
 /// <summary>
 /// Wraps the COM virtual desktop APIs. All methods are defensive — they catch COM

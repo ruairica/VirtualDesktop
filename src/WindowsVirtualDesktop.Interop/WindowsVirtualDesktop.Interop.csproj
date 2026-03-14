@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <RootNamespace>MaximizeToVirtualDesktop.Interop</RootNamespace>
+    <RootNamespace>WindowsVirtualDesktop.Interop</RootNamespace>
   </PropertyGroup>
 
 </Project>

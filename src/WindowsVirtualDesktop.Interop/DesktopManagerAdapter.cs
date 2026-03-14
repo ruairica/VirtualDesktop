@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace MaximizeToVirtualDesktop.Interop;
+namespace WindowsVirtualDesktop.Interop;
 
 /// <summary>
 /// Abstraction over version-specific IVirtualDesktopManagerInternal COM interfaces.

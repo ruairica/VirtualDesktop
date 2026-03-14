@@ -12,7 +12,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace MaximizeToVirtualDesktop.Interop;
+namespace WindowsVirtualDesktop.Interop;
 
 public static class ComGuids
 {
