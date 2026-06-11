@@ -213,6 +213,7 @@ public static partial class NativeMethods
     public const uint WM_HOTKEY = 0x0312;
     public const uint WM_NCHITTEST = 0x0084;
     public const int WM_LBUTTONDOWN = 0x0201;
+    public const uint WM_CLOSE = 0x0010;
     public const uint WM_SYSCOMMAND = 0x0112;
 
     public static readonly IntPtr SC_MAXIMIZE = new IntPtr(0xF030);

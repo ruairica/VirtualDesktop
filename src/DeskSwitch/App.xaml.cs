@@ -18,6 +18,14 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // Prevent unhandled exceptions from silently killing the app
+        DispatcherUnhandledException += (_, args) =>
+        {
+            System.Diagnostics.Trace.WriteLine(
+                $"DeskSwitch: Unhandled exception: {args.Exception}");
+            args.Handled = true;
+        };
+
         // Check Windows version
         int build = GetWindowsBuildNumber();
         if (build < 22000)

@@ -123,20 +123,45 @@ public partial class MainWindow : Window
         if (DesktopList.SelectedItem is not DesktopItem item) return;
         if (_allDesktops.Count <= 1) return; // can't remove last desktop
 
+        bool removingCurrent = item.Id == _currentDesktopId;
+        int prevIndex = DesktopList.SelectedIndex;
+
         var desktop = _vds.FindDesktop(item.Id);
         if (desktop == null) return;
 
         try
         {
+            _vds.CloseWindowsOnDesktop(item.Id);
             _vds.RemoveDesktop(desktop);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Trace.WriteLine($"DeskSwitch: RemoveSelected failed: {ex.Message}");
         }
         finally
         {
             Marshal.ReleaseComObject(desktop);
         }
 
+        if (removingCurrent)
+        {
+            // Removing the current desktop switches to an adjacent one,
+            // which deactivates the overlay anyway — hide it cleanly.
+            _closingFromAction = true;
+            HideOverlay();
+            _closingFromAction = false;
+            return;
+        }
+
+        // Stay open so several desktops can be deleted in a row. Keep the
+        // cursor at the same position rather than jumping back to the
+        // current desktop.
         RefreshDesktopList();
-        ApplyFilter();
+        if (DesktopList.Items.Count > 0)
+        {
+            DesktopList.SelectedIndex = Math.Min(prevIndex, DesktopList.Items.Count - 1);
+            DesktopList.ScrollIntoView(DesktopList.SelectedItem);
+        }
     }
 
     private void CreateNewDesktop(string? name = null)

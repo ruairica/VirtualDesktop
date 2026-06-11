@@ -200,7 +200,6 @@ public sealed class VirtualDesktopService : IDisposable
             var taskbarHwnd = NativeMethods.FindWindow("Shell_TrayWnd", null);
             if (taskbarHwnd != IntPtr.Zero)
             {
-                NativeMethods.GetWindowThreadProcessId(taskbarHwnd, out _);
                 var foregroundHwnd = NativeMethods.GetForegroundWindow();
                 uint desktopThreadId = NativeMethods.GetWindowThreadProcessId(taskbarHwnd, out _);
                 uint foregroundThreadId = NativeMethods.GetWindowThreadProcessId(foregroundHwnd, out _);
@@ -225,6 +224,71 @@ public sealed class VirtualDesktopService : IDisposable
         {
             Trace.WriteLine($"VirtualDesktopService: SwitchToDesktop failed: {ex.Message}");
             return false;
+        }
+    }
+
+    /// <summary>
+    /// Closes all non-pinned windows on the specified desktop by posting WM_CLOSE.
+    /// </summary>
+    public void CloseWindowsOnDesktop(Guid desktopId)
+    {
+        IObjectArray? array = null;
+        int ownPid = Environment.ProcessId;
+        try
+        {
+            if (_viewCollection == null) return;
+            _viewCollection.GetViews(out array);
+            array.GetCount(out int count);
+
+            var iid = typeof(IApplicationView).GUID;
+            for (int i = 0; i < count; i++)
+            {
+                object? obj = null;
+                IApplicationView? view = null;
+                try
+                {
+                    array.GetAt(i, ref iid, out obj);
+                    view = (IApplicationView)obj;
+
+                    if (view.GetVirtualDesktopId(out Guid viewDesktopId) != 0) continue;
+                    if (viewDesktopId != desktopId) continue;
+
+                    // Skip pinned windows — they appear on all desktops
+                    try { if (_pinnedApps != null && _pinnedApps.IsViewPinned(view)) continue; }
+                    catch (Exception ex) { Trace.WriteLine($"VirtualDesktopService: IsViewPinned check failed: {ex.Message}"); }
+
+                    if (view.GetThumbnailWindow(out IntPtr hwnd) == 0 && hwnd != IntPtr.Zero)
+                    {
+                        // Skip windows belonging to our own process to avoid self-destruction
+                        NativeMethods.GetWindowThreadProcessId(hwnd, out int windowPid);
+                        if (windowPid == ownPid)
+                        {
+                            Trace.WriteLine($"VirtualDesktopService: Skipping own-process window {hwnd}");
+                            continue;
+                        }
+
+                        NativeMethods.PostMessage(hwnd, NativeMethods.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                        Trace.WriteLine($"VirtualDesktopService: Posted WM_CLOSE to {hwnd}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine($"VirtualDesktopService: CloseWindowsOnDesktop failed at view {i}: {ex.Message}");
+                }
+                finally
+                {
+                    if (view != null) Marshal.ReleaseComObject(view);
+                    else if (obj != null) Marshal.ReleaseComObject(obj);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Trace.WriteLine($"VirtualDesktopService: CloseWindowsOnDesktop failed: {ex.Message}");
+        }
+        finally
+        {
+            if (array != null) Marshal.ReleaseComObject(array);
         }
     }
 
